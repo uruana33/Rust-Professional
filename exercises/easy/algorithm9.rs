@@ -37,7 +37,27 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.items.push(value);
+        let size = self.items.len();
+        for mut i in (1..=(size / 2) + 1).rev() {
+            loop {
+                let left_idx = self.left_child_idx(i);
+                let right_idx = self.right_child_idx(i);
+                let mut tmp = i;
+                if left_idx < size && (self.comparator)(&self.items[left_idx], &self.items[i]) {
+                    tmp = left_idx;
+                }
+                if right_idx < size && (self.comparator)(&self.items[right_idx], &self.items[i]) {
+                    tmp = right_idx;
+                }
+                if tmp == i {
+                    break;
+                }
+                self.items.swap(i, tmp);
+                i = tmp;
+            }
+        }
+        self.count += 1;
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +77,16 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        let left = self.left_child_idx(idx);
+        let right = self.right_child_idx(idx);
+        if self.children_present(right) && (self.comparator)(&self.items[left], &self.items[right])
+        {
+            right
+        } else if self.children_present(left) {
+            left
+        } else {
+            0
+        }
     }
 }
 
@@ -84,8 +112,28 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+        let last = self.len();
+        self.items.swap(1, last);
+        let root = self.items.pop().unwrap();
+
+        let mut idx = 1;
+        while idx <= self.len() / 2 {
+            let c_idx = self.smallest_child_idx(idx);
+            if c_idx == 0 {
+                break;
+            }
+            if (self.comparator)(&self.items[c_idx], &self.items[idx]) {
+                self.items.swap(idx, c_idx);
+                idx = c_idx;
+            } else {
+                break;
+            }
+        }
+        self.count -= 1;
+        Some(root)
     }
 }
 

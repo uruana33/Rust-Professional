@@ -5,8 +5,21 @@
 */
 
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T>(array: &mut [T]) where T: Ord {
+    if array.len() <= 1 {
+        return;
+    }
+    for i in 0..array.len() {
+        let mut min = &array[i];
+        let mut min_idx = i;
+        for j in i + 1..array.len() {
+            if min > &array[j] {
+                min = &array[j];
+                min_idx = j;
+            }
+        }
+        array.swap(i, min_idx);
+    }
 }
 #[cfg(test)]
 mod tests {

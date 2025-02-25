@@ -69,15 +69,40 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
-	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+    pub fn merge(list_a: LinkedList<T>, list_b: LinkedList<T>) -> Self
+    where
+        T: Ord + Copy,
+    {
+        let mut list_c = LinkedList::<T>::new();
+        let mut a_start = list_a.start;
+        let mut b_start = list_b.start;
+        while let (Some(a_ptr), Some(b_ptr)) = (a_start, b_start) {
+            unsafe {
+                if (*a_ptr.as_ptr()).val <= (*b_ptr.as_ptr()).val {
+                    a_start = (*a_ptr.as_ptr()).next; // 移到下一个节点
+                    list_c.add((*a_ptr.as_ptr()).val);
+                } else {
+                    b_start = (*b_ptr.as_ptr()).next; // 移到下一个节点
+                    list_c.add((*b_ptr.as_ptr()).val);
+                }
+            }
         }
-	}
+
+        while let Some(a_ptr) = a_start {
+            unsafe {
+                a_start = (*a_ptr.as_ptr()).next; // 移到下一个节点
+                list_c.add((*a_ptr.as_ptr()).val);
+            }
+        }
+
+        while let Some(b_ptr) = b_start {
+            unsafe {
+                b_start = (*b_ptr.as_ptr()).next; // 移到下一个节点
+                list_c.add((*b_ptr.as_ptr()).val);
+            }
+        }
+        list_c
+    }
 }
 
 impl<T> Display for LinkedList<T>

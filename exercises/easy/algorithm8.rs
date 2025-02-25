@@ -67,15 +67,23 @@ impl<T> myStack<T> {
         }
     }
     pub fn push(&mut self, elem: T) {
-        //TODO
+        self.q1.enqueue(elem);
+        while let Ok(v) = self.q2.dequeue() {
+            self.q1.enqueue(v);
+        }
+        while let Ok(v) = self.q1.dequeue() {
+            // q1都转移到q2中
+            self.q2.enqueue(v);
+        }
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        if self.is_empty() {
+            return Err("Stack is empty");
+        }
+        self.q2.dequeue()
     }
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+        self.q1.is_empty() && self.q2.is_empty()
     }
 }
 

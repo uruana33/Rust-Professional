@@ -73,7 +73,20 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn reverse(&mut self){
-		// TODO
+        if self.length <= 1 {
+            return;
+        }
+        std::mem::swap(&mut self.start, &mut self.end);
+        let mut curr = self.start;
+        while let Some(c) = curr {
+            unsafe {
+                let node_ptr = c.as_ptr();
+                let (old_prev, old_next) = ((*node_ptr).prev, (*node_ptr).next);
+                (*node_ptr).prev = old_next;
+                (*node_ptr).next = old_prev;
+                curr = old_prev;
+            }
+        }
 	}
 }
 

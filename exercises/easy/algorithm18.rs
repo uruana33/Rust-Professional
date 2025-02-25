@@ -14,8 +14,28 @@
 use std::fmt::{self, Display, Formatter};
 
 pub fn merge_intervals(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
-    // TODO: Implement the logic to merge overlapping intervals
-    Vec::new() // Placeholder return value
+    if intervals.is_empty() {
+        return vec![];
+    }
+    let mut v1 = intervals.clone();
+    v1.sort_by_key(|v| v[0]);
+
+    let mut start = v1[0][0];
+    let mut end = v1[0][1];
+    let mut result = vec![];
+    for i in 1..v1.len() {
+        if v1[i][0] > end {
+            result.push(vec![start, end]);
+            start = v1[i][0];
+            end = v1[i][1];
+        } else {
+            if v1[i - 1][1] < v1[i][1] {
+                end = v1[i][1];
+            }
+        }
+    }
+    result.push(vec![start, end]);
+    result
 }
 
 #[cfg(test)]
